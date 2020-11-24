@@ -1,0 +1,58 @@
+# Round goby mesocosm experiment
+#  eDNA and tissue library, instrument: MiSeq 2x250 Paired End
+
+# analysis 9.16.20, updated to include trimmomatic
+# create directory for this output
+ssh kja68@cbsulogin3.tc.cornell.edu
+mkdir /home/kja68/round_goby_mesocosms/output_9.16.2020
+
+# copy Cayuga eDNA samples into working directory
+ssh kja68@cbsumm23.biohpc.cornell.edu
+mkdir /workdir/kja68/
+cd /workdir/kja68/
+cp /home/kja68/round_goby_mesocosms/goby_edna/*.gz /workdir/kja68/
+echo $(zcat /workdir/kja68/*.gz|wc -l)/4|bc
+# raw reads: 43711826
+# total reads in experiment:  47920390
+
+# trim adaptors: trimmomatic
+cp /home/kja68/round_goby_field/all_sites_edna/trimmomatic_loop.sh ./
+chmod +x trimmomatic_loop.sh
+./trimmomatic_loop.sh
+
+# clean up sequences (retain only *paired.fastq.gz)
+rm *_unpaired.fastq.gz
+rm *R1.fastq.gz
+rm *R2.fastq.gz
+mkdir /workdir/kja68/trimmed
+cp *_paired.fastq.gz /workdir/kja68/trimmed/
+echo $(zcat /workdir/kja68/trimmed/*.gz|wc -l)/4|bc
+# remaining reads: 33503054
+
+# create sample file (sample_file_cayuga_16sep2020.txt)
+ls *_paired.fastq.gz >> sample_file_cayuga_16sep2020.txt
+cp sample_file_cayuga_16sep2020.txt /home/kja68/round_goby_mesocosms/output_9.16.2020/
+# open/edit in excel: tab-delimited text file with 3 columns: 1)sample_name; 2)fastq file 1; 3)fastq file 2
+# keyfile (keyfile_FR_goby_35loci_8.9.2020.txt): tab-delimited text file with 2 columns: 1)Primer name; 2)Sequence of the primer
+
+# move keyfile, and sample file to working directory
+cp /home/kja68/round_goby_mesocosms/output_9.16.2020/sample_file_cayuga_16sep2020.txt /workdir/kja68/
+cp /home/kja68/round_goby_field/all_sites_edna/keyfile_FR_goby_35loci_8.9.2020.txt /workdir/kja68/
+
+# use screen to run in the background: a quick review below
+# to attach a new screen, type "screen" in terminal
+# detach screen: press Ctrl a d
+# reattach the screen: screen -d -r
+# View screen sessions: screen -ls
+# terminate a screen session: screen -X -S [session # you want to kill] kill
+
+screen
+# generate reference sequence 
+analyze_amplicon.pl -s sample_file_cayuga_16sep2020.txt -k keyfile_FR_goby_35loci_8.9.2020.txt -d 20:150 -t 24 -y 2 -z y -i 8 -o ref_seq_16sep2020
+make_refseq.pl ref_seq_16sep2020/
+
+# run script 
+analyze_amplicon.pl -s sample_file_cayuga_16sep2020.txt -k keyfile_FR_goby_35loci_8.9.2020.txt -r ref_seq_16sep2020/refseq_0_0.fa -x 40:90:90 -d 20:150 -t 24 -y 2 -z y -i 8 -o ref_out_16sep2020
+
+# copy relevant files to login node
+cp -r ref_out_16sep2020/hap* /home/kja68/round_goby_mesocosms/output_9.16.2020/
