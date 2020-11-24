@@ -4,17 +4,16 @@
 
 ### Overview
 
-In this project, we evaluated intraspecific genetic diversity in the round goby (Neogobius melanostomus) using eDNA samples from experimental mesocosms. We tested the similarity between eDNA and individual tissue-based estimates of allele frequencies and used a likelihood-based DNA mixture framework to estimate the number of unique genetic contributors in mesocosm eDNA samples and in simulated mixtures of alleles. We also tested the similarity between eDNA and tissue-based estimates of allele frequencies in a field trial.
+In this project, we evaluated intraspecific genetic diversity in the round goby (Neogobius melanostomus) using eDNA samples from experimental mesocosms and a field trial. We tested the similarity between eDNA and individual tissue-based estimates of allele frequencies and used a likelihood-based DNA mixture framework to estimate the number of unique genetic contributors in mesocosm eDNA samples and in simulated mixtures of alleles. We also tested the similarity between eDNA and tissue-based estimates of allele frequencies in a field trial.
 
 **Sequencing:**
   - Illumina MiSeq 2x250 bp kit
-  - Raw read output: 
+  - Raw read output: 47920390 reads
+  
+**Processing**
+  - Mesocosm experiment data processinng: [mult_amp_mesocosms.txt](mult_amp_mesocosms.txt)
+  - Field trial data processing: [mult_amp_field_trial.txt](mult_amp_field_trial.txt)
 
 **Analysis:**
-  - Calculate tissue allele frequencies: [tissue_allele_freqs.R](tissue_allele_freqs.R)
-  - Calculate eDNA allele frequencies: [edna_allele_freqs.R](edna_allele_freqs.R)
-  - Identify problem loci and remove from datasets: [inspect_loci.R](inspect_loci.R)
-  - PCA, heatmap, and correlation of tissue allele frequencies and eDNA read frequencies: [PCA_heatmap_corr.R](PCA_heatmap_corr.R)
-  - Contributor estimation: [contributor_estimation.R](contributor_estimation.R)
-  - Supplementary figures: [supp_figs.R](supp_figs.R)
+  - Mesocosm experiment analysis: [mesocosm_analysis.R](mesocosm_analysis.R)
   - Field trial analysis: [Cayuga_field_trial.R](Cayuga_field_trial.R)
